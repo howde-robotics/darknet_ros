@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <launch>
+
   <!-- Console launch prefix -->
   <arg name="launch_prefix" default=""/>
+  <arg name="node_ns" default=""/>
   <arg name="image" default="/camera/rgb/image_raw" />
+	<arg name="bbox_out" default="/darknet_ros/bounding_boxes" />
+	<arg name="detection_image_out" default="/darknet_ros/detection_image" />
+  <arg name="found_object_out" default="/darknet_ros/found_object" />
 
   <!-- Config and weights folder. -->
   <arg name="yolo_weights_path"          default="$(find darknet_ros)/yolo_network_config/weights"/>
@@ -14,14 +19,17 @@
   <arg name="network_param_file"         default="$(find darknet_ros)/config/yolov2-tiny.yaml"/>
 
   <!-- Load parameters -->
-  <rosparam command="load" ns="darknet_ros" file="$(arg ros_param_file)"/>
-  <rosparam command="load" ns="darknet_ros" file="$(arg network_param_file)"/>
+  <rosparam command="load" ns="$(arg node_ns)" file="$(arg ros_param_file)"/>
+  <rosparam command="load" ns="$(arg node_ns)" file="$(arg network_param_file)"/>
 
   <!-- Start darknet and ros wrapper -->
-  <node pkg="darknet_ros" type="darknet_ros" name="darknet_ros" output="screen" launch-prefix="$(arg launch_prefix)">
+  <node pkg="darknet_ros" type="darknet_ros" name="$(arg node_ns)" output="screen" launch-prefix="$(arg launch_prefix)">
     <param name="weights_path"          value="$(arg yolo_weights_path)" />
     <param name="config_path"           value="$(arg yolo_config_path)" />
     <remap from="camera/rgb/image_raw"  to="$(arg image)" />
+		<remap from="/darknet_ros/bounding_boxes" to="$(arg bbox_out)"/>
+		<remap from="/darknet_ros/detection_image" to="$(arg detection_image_out)"/>
+    <remap from="/darknet_ros/found_object" to="$(arg found_object_out)"/>
   </node>
 
  <!--<node name="republish" type="republish" pkg="image_transport" output="screen" 	args="compressed in:=/front_camera/image_raw raw out:=/camera/image_raw" /> -->

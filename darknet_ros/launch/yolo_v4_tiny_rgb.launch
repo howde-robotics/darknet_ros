@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  
+  <!-- Use YOLOv4 tiny -->
+  <arg name="node_ns" default="darknet_ros_rgb"/>
+  <arg name="network_param_file"         default="$(find darknet_ros)/config/yolov4-tiny.yaml"/>
+  <arg name="image" default="camera/color/image_raw" />
+  <arg name="bbox_out" default="/$(arg node_ns)/bounding_boxes" />
+  <arg name="detection_image_out" default="/$(arg node_ns)/detection_image" />
+  <arg name="found_object_out" default="/$(arg node_ns)/found_object" />
+
+  <!-- Include main launch file -->
+  <include file="$(find darknet_ros)/launch/darknet_ros.launch">
+    <arg name="node_ns" value="$(arg node_ns)"/>
+    <arg name="network_param_file"    value="$(arg network_param_file)"/>
+    <arg name="image" value="$(arg image)" />
+    <arg name="bbox_out" value="$(arg bbox_out)" />
+    <arg name="detection_image_out" value="$(arg detection_image_out)" />
+    <arg name="found_object_out" value="$(arg found_object_out)" />
+  </include>
+
+</launch>
