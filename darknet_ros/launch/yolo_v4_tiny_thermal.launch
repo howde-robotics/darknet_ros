@@ -9,6 +9,7 @@
   <arg name="bbox_out" default="/$(arg node_ns)/bounding_boxes" />
   <arg name="detection_image_out" default="/$(arg node_ns)/detection_image" />
   <arg name="found_object_out" default="/$(arg node_ns)/found_object" />
+  <arg name="target_fps_period_secs" default="0.1111" />
 
   <!-- Include main launch file -->
   <include file="$(find darknet_ros)/launch/darknet_ros.launch">

@@ -89,6 +89,9 @@ void YoloObjectDetector::init() {
   weightsPath += "/" + weightsModel;
   weights = new char[weightsPath.length() + 1];
   strcpy(weights, weightsPath.c_str());
+  
+  // Target frame-per-second, unit in period (secs)
+  nodeHandle_.param("target_fps_period_secs", target_fps_period_secs_, (float)0.1111);
 
   // Path to config file.
   nodeHandle_.param("yolo_model/config_file/name", configModel, std::string("yolov2-tiny.cfg"));
@@ -493,6 +496,13 @@ void YoloObjectDetector::yolo() {
     fetch_thread = std::thread(&YoloObjectDetector::fetchInThread, this);
     detect_thread = std::thread(&YoloObjectDetector::detectInThread, this);
     if (!demoPrefix_) {
+      const float delta_secs = what_time_is_it_now() - demoTime_;
+      const float time_to_wait = target_fps_period_secs_ - delta_secs;
+      if (time_to_wait > 0) {
+        const int time_to_wait_ms = int(time_to_wait * 1000);
+        const auto wait_duration = std::chrono::milliseconds(time_to_wait_ms);
+        std::this_thread::sleep_for(wait_duration);
+      }
       fps_ = 1. / (what_time_is_it_now() - demoTime_);
       demoTime_ = what_time_is_it_now();
       if (viewImage_) {
